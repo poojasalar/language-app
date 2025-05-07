@@ -15,7 +15,7 @@
         android:elevation="10dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:navigationIcon="@android:drawable/ic_media_previous"
-        app:title="Word Quiz"
+        app:title="Happy Word Quiz"
         app:titleTextColor="#FFFFFF" />
 
     <!-- Scrollable Quiz Content -->
