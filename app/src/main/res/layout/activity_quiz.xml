@@ -10,15 +10,17 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
+        android:layout_height="80dp"
         android:background="#4CAF50"
-        android:elevation="10dp"
+        android:elevation="15dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:navigationIcon="@android:drawable/ic_media_previous"
-        app:title=" Word Quiz"
-        app:titleTextColor="#FFFFFF" />
+        app:title="Word Quiz"
+        app:titleTextColor="#FFFFFF"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
 
-    <!-- Scrollable Quiz Content -->
+    <!-- todo -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

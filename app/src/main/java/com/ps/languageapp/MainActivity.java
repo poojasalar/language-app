@@ -2,109 +2,121 @@ package com.ps.languageapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import org.json.JSONObject;
-import java.io.*;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText inputWord;
     private TextView txtTranslation;
-    private Button btnTranslate, btnFavorite, btnStartQuiz;
+    private Button btnTranslate, btnStartQuiz;
 
-    private HashMap<String, WordInfo> dictionary; // Change to store WordInfo objects
-    private ArrayList<String> favorites;
+    private HashMap<String, wordInfo> dictionary;
+    private FirebaseFirestore db;
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
 
-        // Initialize views
+        // Initialize UI
         inputWord = findViewById(R.id.inputWord);
         txtTranslation = findViewById(R.id.txtTranslation);
         btnTranslate = findViewById(R.id.btnTranslate);
         btnStartQuiz = findViewById(R.id.btnStartQuiz);
 
-        // Initialize data structures
-        favorites = new ArrayList<>();
-        dictionary = loadDictionaryFromJSON();
+        // Initialize Firebase
+        db = FirebaseFirestore.getInstance();
 
-        // Handle translation
-        btnTranslate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String word = inputWord.getText().toString().trim().toLowerCase();
-                if (dictionary.containsKey(word)) {
-                    WordInfo wordInfo = dictionary.get(word);
-                    String translated = wordInfo.translation;
-                    String language = wordInfo.language;
-                    // Display translation and language
-                    txtTranslation.setText(translated + " (" + language + ")");
-                } else {
-                    txtTranslation.setText("Translation not found.");
-                }
+        // Define the dictionary manually
+        dictionary = createDictionary();
+
+        // Upload dictionary to Firestore
+        uploadDictionaryToFirestore(dictionary);
+
+        // Set Translate button behavior
+        btnTranslate.setOnClickListener(v -> {
+            String word = inputWord.getText().toString().trim().toLowerCase();
+            if (dictionary.containsKey(word)) {
+                wordInfo info = dictionary.get(word);
+                txtTranslation.setText(info.translation + " (" + info.language + ")");
+            } else {
+                txtTranslation.setText("Translation not found.");
             }
         });
 
-        // Start quiz activity
-        btnStartQuiz.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, QuizActivity.class);
-                startActivity(intent);
-            }
+        // Set Quiz button (stub)
+        btnStartQuiz.setOnClickListener(v -> {
+            // Navigate back to MainActivity when back button is clicked
+            Intent intent = new Intent(MainActivity.this, QuizActivity.class);
+            startActivity(intent);
+            finish();  // Close the current activity
         });
     }
 
-    // Method to load dictionary from JSON file in assets
-    private HashMap<String, WordInfo> loadDictionaryFromJSON() {
-        HashMap<String, WordInfo> result = new HashMap<>();
-        try {
-            InputStream inputStream = getAssets().open("dictionary.json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
+    // Define dictionary data directly in code
+    private HashMap<String, wordInfo> createDictionary() {
+        HashMap<String, wordInfo> data = new HashMap<>();
 
-            // Read the JSON file
-            while ((line = reader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
+        data.put("hello", new wordInfo("hola", "Spanish"));
+        data.put("world", new wordInfo("mundo", "Spanish"));
+        data.put("thank you", new wordInfo("merci", "French"));
+        data.put("goodbye", new wordInfo("adiós", "Spanish"));
+        data.put("cat", new wordInfo("chat", "French"));
+        data.put("dog", new wordInfo("chien", "French"));
+        data.put("please", new wordInfo("per favore", "Italian"));
+        data.put("apple", new wordInfo("manzana", "Spanish"));
+        data.put("book", new wordInfo("livre", "French"));
+        data.put("water", new wordInfo("agua", "Spanish"));
+        data.put("friend", new wordInfo("amico", "Italian"));
+        data.put("family", new wordInfo("famille", "French"));
+        data.put("love", new wordInfo("amore", "Italian"));
+        data.put("house", new wordInfo("casa", "Spanish"));
+        data.put("good morning", new wordInfo("buongiorno", "Italian"));
+        data.put("good night", new wordInfo("bonne nuit", "French"));
+        data.put("peace", new wordInfo("paz", "Spanish"));
+        data.put("bread", new wordInfo("pan", "Spanish"));
+        data.put("soup", new wordInfo("soupe", "French"));
+        data.put("salt", new wordInfo("sale", "Italian"));
 
-            // Parse the JSON
-            JSONObject jsonObject = new JSONObject(jsonBuilder.toString());
+        // Add more if needed...
 
-            // Iterate through the JSON object and add keys and values to the dictionary
-            Iterator<String> keys = jsonObject.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject wordDetails = jsonObject.getJSONObject(key);
-                String translation = wordDetails.getString("translation");
-                String language = wordDetails.getString("language");
+        return data;
+    }
 
-                // Store WordInfo object with translation and language
-                result.put(key.toLowerCase(), new WordInfo(translation, language));
-            }
+    // Upload dictionary to Firestore
+    private void uploadDictionaryToFirestore(HashMap<String, wordInfo> dictionary) {
+        for (Map.Entry<String, wordInfo> entry : dictionary.entrySet()) {
+            String word = entry.getKey();
+            wordInfo info = entry.getValue();
 
-            // Close resources
-            reader.close();
-            inputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to load dictionary", Toast.LENGTH_SHORT).show();
+            Map<String, Object> data = new HashMap<>();
+            data.put("translation", info.translation);
+            data.put("language", info.language);
+
+            db.collection("dictionary")
+                    .document(word)
+                    .set(data)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Uploaded: " + word))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to upload: " + word, e));
         }
-        return result;
+        Toast.makeText(this, "Dictionary uploaded to Firestore", Toast.LENGTH_SHORT).show();
     }
 
-    // WordInfo class to store translation and language
-    private class WordInfo {
+    // Simple word data structure
+    static class wordInfo {
         String translation;
         String language;
 
-        WordInfo(String translation, String language) {
+        wordInfo(String translation, String language) {
             this.translation = translation;
             this.language = language;
         }
