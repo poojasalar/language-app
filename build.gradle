@@ -6,11 +6,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1' // Use your required Gradle version
-        classpath 'com.google.gms:google-services:4.4.0'  // Firebase services plugin
+        // Gradle plugin version should be specified only once
+        classpath 'com.android.tools.build:gradle:8.1.1' // The latest stable version of Android Gradle Plugin
+
+        // Firebase services plugin
+        classpath 'com.google.gms:google-services:4.4.0' // Choose the appropriate Firebase services version
     }
 }
 
 plugins {
+    // Declaring the Android application plugin for future use
     alias(libs.plugins.android.application) apply false
 }

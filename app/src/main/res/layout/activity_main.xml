@@ -9,28 +9,29 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
-        <!-- Modern Centered Header -->
+        <!-- Modern Header Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#3F7CAC"
-            android:elevation="4dp">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#3F7CAC">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/headerTitle"
                     android:text="Word Translator"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
@@ -38,46 +39,51 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Input -->
-        <EditText
-            android:id="@+id/inputWord"
-            android:hint="Enter word"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="16dp"
-            android:padding="16dp"
+        <!-- Input Field -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter word">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputWord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Translate Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTranslate"
-            android:text="Translate"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#0B4F6C"
-            android:textColor="#FFFFFF"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Translate"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            android:layout_marginBottom="16dp"
+            app:backgroundTint="#0B4F6C" />
 
         <!-- Translation Result -->
         <TextView
             android:id="@+id/txtTranslation"
             android:text="Translation will appear here"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="#333333"
-            android:padding="16dp"
+            android:padding="12dp"
             android:layout_marginBottom="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <!-- Start Quiz Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartQuiz"
-            android:text="Start Quiz"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Start Quiz"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#4CAF50"
+            android:layout_marginBottom="32dp" />
 
     </LinearLayout>
 </ScrollView>
